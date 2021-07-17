@@ -5,6 +5,12 @@
 
 Utilities of `CGEvent`.
 
+## Requirements
+
+cpp-osx-cg_event depends the following classes.
+
+- [pqrs::cf::cf_ptr](https://github.com/pqrs-org/cpp-cf-cf_ptr).
+
 ## Install
 
 ### Using package manager
