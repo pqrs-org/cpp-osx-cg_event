@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/pqrs-org/cpp-osx-cg_event/workflows/CI/badge.svg)](https://github.com/pqrs-org/cpp-osx-cg_event/actions)
-[![License](https://img.shields.io/badge/license-Boost%20Software%20License-blue.svg)](https://github.com/pqrs-org/cpp-osx-cg_event/blob/master/LICENSE.md)
+[![License](https://img.shields.io/badge/license-Boost%20Software%20License-blue.svg)](https://github.com/pqrs-org/cpp-osx-cg_event/blob/main/LICENSE.md)
 
 # cpp-osx-cg_event
 
