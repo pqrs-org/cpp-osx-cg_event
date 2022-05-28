@@ -14,5 +14,4 @@ project (test)
 add_executable(
   test
   test.cpp
-  mouse_test.cpp
 )
