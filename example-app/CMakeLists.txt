@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.9)
+cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
 
@@ -13,7 +13,7 @@ add_compile_options(-fobjc-arc)
 add_compile_options(-fmodules)
 add_compile_options(-fcxx-modules)
 
-include_directories(SYSTEM ${CMAKE_CURRENT_LIST_DIR}/vendor/include)
+include_directories(SYSTEM ${CMAKE_CURRENT_LIST_DIR}/../vendor/vendor/include)
 include_directories(SYSTEM ${CMAKE_CURRENT_LIST_DIR}/../include)
 
 add_executable(
