@@ -4,8 +4,8 @@
 
 System requirements to build:
 
-- macOS 11+
-- Xcode 12+
+- macOS 13+
+- Xcode 26+
 - Command Line Tools for Xcode
 - CMake (`brew install cmake`)
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
 
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
+set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum OS X deployment version")
 
 project (cg-event-example-app)
 
