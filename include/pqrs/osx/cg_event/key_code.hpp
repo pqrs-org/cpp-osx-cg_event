@@ -194,12 +194,17 @@ constexpr value_t keyboard_right_shift(0x3c);
 constexpr value_t keyboard_right_alt(0x3d);
 constexpr value_t keyboard_right_gui(0x36);
 
+constexpr value_t consumer_voice_command(0xb0);
+
+constexpr value_t apple_vendor_keyboard_spotlight(0x81);
 constexpr value_t apple_vendor_keyboard_dashboard(0x82);
 constexpr value_t apple_vendor_keyboard_function(0x3f);
 constexpr value_t apple_vendor_keyboard_launchpad(0x83);
 constexpr value_t apple_vendor_keyboard_expose_all(0xa0);
 
 constexpr value_t apple_vendor_top_case_keyboard_fn(0x3f); // apple_vendor_top_case_keyboard_fn == apple_vendor_keyboard_function
+
+constexpr value_t generic_desktop_do_not_disturb(0xb2);
 
 //
 // make_key_code
@@ -384,10 +389,28 @@ constexpr auto usage_page_keyboard_or_keypad_map = mapbox::eternal::map<hid::usa
 
 #undef PQRS_OSX_CG_EVENT_KEY_CODE_PAIR
 
+//
+// consumer
+//
+
+#define PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(name) \
+  {hid::usage::consumer::name, consumer_##name}
+
+constexpr auto usage_page_consumer_map = mapbox::eternal::map<hid::usage::value_t, value_t>({
+    PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(voice_command),
+});
+
+#undef PQRS_OSX_CG_EVENT_KEY_CODE_PAIR
+
+//
+// apple_vendor_keyboard
+//
+
 #define PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(name) \
   {hid::usage::apple_vendor_keyboard::name, apple_vendor_keyboard_##name}
 
 constexpr auto usage_page_apple_vendor_keyboard_map = mapbox::eternal::map<hid::usage::value_t, value_t>({
+    PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(spotlight),
     PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(dashboard),
     PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(function),
     PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(launchpad),
@@ -396,11 +419,28 @@ constexpr auto usage_page_apple_vendor_keyboard_map = mapbox::eternal::map<hid::
 
 #undef PQRS_OSX_CG_EVENT_KEY_CODE_PAIR
 
+//
+// apple_vendor_top_case
+//
+
 #define PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(name) \
   {hid::usage::apple_vendor_top_case::name, apple_vendor_top_case_##name}
 
 constexpr auto usage_page_apple_vendor_top_case_map = mapbox::eternal::map<hid::usage::value_t, value_t>({
     PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(keyboard_fn),
+});
+
+#undef PQRS_OSX_CG_EVENT_KEY_CODE_PAIR
+
+//
+// generic_desktop
+//
+
+#define PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(name) \
+  {hid::usage::generic_desktop::name, generic_desktop_##name}
+
+constexpr auto usage_page_generic_desktop_map = mapbox::eternal::map<hid::usage::value_t, value_t>({
+    PQRS_OSX_CG_EVENT_KEY_CODE_PAIR(do_not_disturb),
 });
 
 #undef PQRS_OSX_CG_EVENT_KEY_CODE_PAIR
@@ -413,16 +453,53 @@ inline std::optional<key_code::value_t> find(T& map, hid::usage::value_t usage) 
   }
   return std::nullopt;
 }
+
+template <typename T>
+inline std::optional<hid::usage::value_t> find_usage(T& map, key_code::value_t key_code) {
+  for (const auto& [usage, mapped_key_code] : map) {
+    if (mapped_key_code == key_code) {
+      return usage;
+    }
+  }
+  return std::nullopt;
+}
 } // namespace impl
 } // namespace key_code
 
 inline std::optional<key_code::value_t> make_key_code(hid::usage_page::value_t usage_page, hid::usage::value_t usage) {
   if (usage_page == hid::usage_page::keyboard_or_keypad) {
     return key_code::impl::find(key_code::impl::usage_page_keyboard_or_keypad_map, usage);
+  } else if (usage_page == hid::usage_page::consumer) {
+    return key_code::impl::find(key_code::impl::usage_page_consumer_map, usage);
   } else if (usage_page == hid::usage_page::apple_vendor_keyboard) {
     return key_code::impl::find(key_code::impl::usage_page_apple_vendor_keyboard_map, usage);
   } else if (usage_page == hid::usage_page::apple_vendor_top_case) {
     return key_code::impl::find(key_code::impl::usage_page_apple_vendor_top_case_map, usage);
+  } else if (usage_page == hid::usage_page::generic_desktop) {
+    return key_code::impl::find(key_code::impl::usage_page_generic_desktop_map, usage);
+  }
+
+  return std::nullopt;
+}
+
+inline std::optional<hid::usage_pair> make_usage_pair(key_code::value_t key_code) {
+  // There is only one exceptional case where multiple usage_pair values share a single key_code::value_t.
+  // The following two usage_pair values both map to key_code::value_t(0x3f).
+  // Check apple_vendor_top_case first so that apple_vendor_top_case_keyboard_fn is preferred.
+  //
+  // - apple_vendor_top_case_keyboard_fn == key_code::value_t(0x3f)
+  // - apple_vendor_keyboard_function    == key_code::value_t(0x3f)
+
+  if (auto usage = key_code::impl::find_usage(key_code::impl::usage_page_keyboard_or_keypad_map, key_code)) {
+    return hid::usage_pair(hid::usage_page::keyboard_or_keypad, *usage);
+  } else if (auto usage = key_code::impl::find_usage(key_code::impl::usage_page_consumer_map, key_code)) {
+    return hid::usage_pair(hid::usage_page::consumer, *usage);
+  } else if (auto usage = key_code::impl::find_usage(key_code::impl::usage_page_apple_vendor_top_case_map, key_code)) {
+    return hid::usage_pair(hid::usage_page::apple_vendor_top_case, *usage);
+  } else if (auto usage = key_code::impl::find_usage(key_code::impl::usage_page_apple_vendor_keyboard_map, key_code)) {
+    return hid::usage_pair(hid::usage_page::apple_vendor_keyboard, *usage);
+  } else if (auto usage = key_code::impl::find_usage(key_code::impl::usage_page_generic_desktop_map, key_code)) {
+    return hid::usage_pair(hid::usage_page::generic_desktop, *usage);
   }
 
   return std::nullopt;

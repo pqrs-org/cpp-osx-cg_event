@@ -21,5 +21,58 @@ int main(void) {
     expect(pqrs::osx::cg_event::mouse::mouse_up_event_type(CGMouseButton(4)) == kCGEventOtherMouseUp);
   };
 
+  "make_key_code"_test = [] {
+    expect(pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::keyboard_or_keypad,
+                                              pqrs::hid::usage::keyboard_or_keypad::keyboard_a) ==
+           std::optional<pqrs::osx::cg_event::key_code::value_t>(pqrs::osx::cg_event::key_code::keyboard_a));
+
+    expect(pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::consumer,
+                                              pqrs::hid::usage::consumer::voice_command) ==
+           std::optional<pqrs::osx::cg_event::key_code::value_t>(pqrs::osx::cg_event::key_code::consumer_voice_command));
+
+    expect(pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::apple_vendor_keyboard,
+                                              pqrs::hid::usage::apple_vendor_keyboard::spotlight) ==
+           std::optional<pqrs::osx::cg_event::key_code::value_t>(pqrs::osx::cg_event::key_code::apple_vendor_keyboard_spotlight));
+
+    expect(pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::apple_vendor_top_case,
+                                              pqrs::hid::usage::apple_vendor_top_case::keyboard_fn) ==
+           std::optional<pqrs::osx::cg_event::key_code::value_t>(pqrs::osx::cg_event::key_code::apple_vendor_top_case_keyboard_fn));
+
+    expect(pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::generic_desktop,
+                                              pqrs::hid::usage::generic_desktop::do_not_disturb) ==
+           std::optional<pqrs::osx::cg_event::key_code::value_t>(pqrs::osx::cg_event::key_code::generic_desktop_do_not_disturb));
+  };
+
+  "make_usage_pair"_test = [] {
+    expect(pqrs::osx::cg_event::make_usage_pair(pqrs::osx::cg_event::key_code::keyboard_a) ==
+           std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::keyboard_or_keypad,
+                                                                      pqrs::hid::usage::keyboard_or_keypad::keyboard_a)));
+
+    expect(pqrs::osx::cg_event::make_usage_pair(pqrs::osx::cg_event::key_code::consumer_voice_command) ==
+           std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::consumer,
+                                                                      pqrs::hid::usage::consumer::voice_command)));
+
+    expect(pqrs::osx::cg_event::make_usage_pair(pqrs::osx::cg_event::key_code::apple_vendor_keyboard_spotlight) ==
+           std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::apple_vendor_keyboard,
+                                                                      pqrs::hid::usage::apple_vendor_keyboard::spotlight)));
+
+    expect(pqrs::osx::cg_event::make_usage_pair(pqrs::osx::cg_event::key_code::generic_desktop_do_not_disturb) ==
+           std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::generic_desktop,
+                                                                      pqrs::hid::usage::generic_desktop::do_not_disturb)));
+
+    //
+    // fn
+    //
+
+    expect(pqrs::osx::cg_event::make_usage_pair(pqrs::osx::cg_event::key_code::apple_vendor_top_case_keyboard_fn) ==
+           std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::apple_vendor_top_case,
+                                                                      pqrs::hid::usage::apple_vendor_top_case::keyboard_fn)));
+
+    expect(pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::apple_vendor_top_case,
+                                              pqrs::hid::usage::apple_vendor_top_case::keyboard_fn) ==
+           pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::apple_vendor_keyboard,
+                                              pqrs::hid::usage::apple_vendor_keyboard::function));
+  };
+
   return 0;
 }
