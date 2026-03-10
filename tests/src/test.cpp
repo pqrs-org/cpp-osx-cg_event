@@ -21,6 +21,24 @@ int main(void) {
     expect(pqrs::osx::cg_event::mouse::mouse_up_event_type(CGMouseButton(4)) == kCGEventOtherMouseUp);
   };
 
+  "make_aux_control_button"_test = [] {
+    expect(pqrs::osx::cg_event::make_aux_control_button(pqrs::hid::usage_page::keyboard_or_keypad,
+                                                        pqrs::hid::usage::keyboard_or_keypad::keyboard_volume_up) ==
+           std::optional<pqrs::osx::cg_event::aux_control_button::value_t>(pqrs::osx::cg_event::aux_control_button::sound_up));
+
+    expect(pqrs::osx::cg_event::make_aux_control_button(pqrs::hid::usage_page::consumer,
+                                                        pqrs::hid::usage::consumer::scan_next_track) ==
+           std::optional<pqrs::osx::cg_event::aux_control_button::value_t>(pqrs::osx::cg_event::aux_control_button::next));
+
+    expect(pqrs::osx::cg_event::make_aux_control_button(pqrs::hid::usage_page::apple_vendor_keyboard,
+                                                        pqrs::hid::usage::apple_vendor_keyboard::brightness_up) ==
+           std::optional<pqrs::osx::cg_event::aux_control_button::value_t>(pqrs::osx::cg_event::aux_control_button::brightness_up));
+
+    expect(pqrs::osx::cg_event::make_aux_control_button(pqrs::hid::usage_page::apple_vendor_top_case,
+                                                        pqrs::hid::usage::apple_vendor_top_case::illumination_toggle) ==
+           std::optional<pqrs::osx::cg_event::aux_control_button::value_t>(pqrs::osx::cg_event::aux_control_button::illumination_toggle));
+  };
+
   "make_key_code"_test = [] {
     expect(pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::keyboard_or_keypad,
                                               pqrs::hid::usage::keyboard_or_keypad::keyboard_a) ==
@@ -72,6 +90,30 @@ int main(void) {
                                               pqrs::hid::usage::apple_vendor_top_case::keyboard_fn) ==
            pqrs::osx::cg_event::make_key_code(pqrs::hid::usage_page::apple_vendor_keyboard,
                                               pqrs::hid::usage::apple_vendor_keyboard::function));
+  };
+
+  "make_usage_pair_from_aux_control_button"_test = [] {
+    expect(pqrs::osx::cg_event::make_usage_pair(pqrs::osx::cg_event::aux_control_button::next) ==
+           std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::consumer,
+                                                                      pqrs::hid::usage::consumer::scan_next_track)));
+
+    expect(pqrs::osx::cg_event::make_usage_pair(pqrs::osx::cg_event::aux_control_button::sound_up) ==
+           std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::consumer,
+                                                                      pqrs::hid::usage::consumer::volume_increment)));
+
+    expect(pqrs::osx::cg_event::make_usage_pair(pqrs::osx::cg_event::aux_control_button::brightness_up) ==
+           std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::consumer,
+                                                                      pqrs::hid::usage::consumer::display_brightness_increment)));
+
+    expect(pqrs::osx::cg_event::make_aux_control_button(pqrs::hid::usage_page::keyboard_or_keypad,
+                                                        pqrs::hid::usage::keyboard_or_keypad::keyboard_volume_up) ==
+           pqrs::osx::cg_event::make_aux_control_button(pqrs::hid::usage_page::consumer,
+                                                        pqrs::hid::usage::consumer::volume_increment));
+
+    expect(pqrs::osx::cg_event::make_aux_control_button(pqrs::hid::usage_page::apple_vendor_top_case,
+                                                        pqrs::hid::usage::apple_vendor_top_case::brightness_up) ==
+           pqrs::osx::cg_event::make_aux_control_button(pqrs::hid::usage_page::apple_vendor_keyboard,
+                                                        pqrs::hid::usage::apple_vendor_keyboard::brightness_up));
   };
 
   return 0;
