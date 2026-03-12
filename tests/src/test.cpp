@@ -1,6 +1,8 @@
 #include <boost/ut.hpp>
 #include <pqrs/osx/cg_event.hpp>
 
+#include "test_event_factory.h"
+
 int main(void) {
   using namespace boost::ut;
   using namespace boost::ut::literals;
@@ -123,6 +125,16 @@ int main(void) {
       expect(pqrs::osx::cg_event::make_usage_pair(event) ==
              std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::keyboard_or_keypad,
                                                                         pqrs::hid::usage::keyboard_or_keypad::keyboard_a)));
+
+      CFRelease(event);
+    } else {
+      expect(false);
+    }
+
+    if (auto event = pqrs_test_create_aux_control_button_event(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up))) {
+      expect(pqrs::osx::cg_event::make_usage_pair(event) ==
+             std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::consumer,
+                                                                        pqrs::hid::usage::consumer::volume_increment)));
 
       CFRelease(event);
     } else {

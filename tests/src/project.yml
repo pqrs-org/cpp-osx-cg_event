@@ -11,6 +11,11 @@ targets:
           - -Wall
           - -Werror
           - "-std=c++20"
+      - path: test_event_factory.mm
+        compilerFlags:
+          - -Wall
+          - -Werror
+          - "-std=c++20"
       - path: ../../src
     settings:
       base:
