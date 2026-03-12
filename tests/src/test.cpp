@@ -116,5 +116,19 @@ int main(void) {
                                                         pqrs::hid::usage::apple_vendor_keyboard::brightness_up));
   };
 
+  "make_usage_pair_from_cg_event"_test = [] {
+    if (auto event = CGEventCreateKeyboardEvent(nullptr,
+                                                static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
+                                                true)) {
+      expect(pqrs::osx::cg_event::make_usage_pair(event) ==
+             std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::keyboard_or_keypad,
+                                                                        pqrs::hid::usage::keyboard_or_keypad::keyboard_a)));
+
+      CFRelease(event);
+    } else {
+      expect(false);
+    }
+  };
+
   return 0;
 }

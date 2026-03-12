@@ -1,0 +1,25 @@
+name: test
+
+targets:
+  test:
+    type: tool
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: test.cpp
+        compilerFlags:
+          - -Wall
+          - -Werror
+          - "-std=c++20"
+      - path: ../../src
+    settings:
+      base:
+        OTHER_SWIFT_FLAGS: "-warnings-as-errors"
+        SWIFT_OBJC_BRIDGING_HEADER: ../../include/pqrs/osx/cg_event/impl/Bridging-Header.h
+        SYSTEM_HEADER_SEARCH_PATHS:
+          - ../../include
+          - ../../vendor/vendor/include
+    dependencies:
+      - sdk: ApplicationServices.framework
+      - sdk: AppKit.framework
+      - sdk: IOKit.framework

@@ -18,3 +18,8 @@ cpp-osx-cg_event depends the following classes.
 ## Install
 
 Copy `include/pqrs` and `vendor/vendor/include` directories into your include directory.
+
+If you use this library, also configure your project as follows:
+
+- Add `src/pqrs/osx/cg_event/PQRSOSXCGEventImpl.swift`
+- Add `include/pqrs/osx/cg_event/impl/Bridging-Header.h` as Bridging Header
