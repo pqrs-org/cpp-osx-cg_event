@@ -12,5 +12,6 @@
 
 #include "cg_event/aux_control_button.hpp"
 #include "cg_event/event.hpp"
+#include "cg_event/event_type.hpp"
 #include "cg_event/key_code.hpp"
 #include "cg_event/mouse.hpp"

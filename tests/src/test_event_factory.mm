@@ -4,7 +4,11 @@
 #import <IOKit/hidsystem/IOLLEvent.h>
 
 CGEventRef pqrs_test_create_aux_control_button_event(uint16_t value) {
-  auto data1 = static_cast<NSInteger>(value) << 16;
+  return pqrs_test_create_aux_control_button_event_with_type(value, 0);
+}
+
+CGEventRef pqrs_test_create_aux_control_button_event_with_type(uint16_t value, uint8_t event_type) {
+  auto data1 = (static_cast<NSInteger>(value) << 16) | (static_cast<NSInteger>(event_type) << 8);
 
   auto event = [NSEvent otherEventWithType:NSEventTypeSystemDefined
                                   location:NSZeroPoint

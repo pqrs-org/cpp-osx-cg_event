@@ -142,5 +142,49 @@ int main(void) {
     }
   };
 
+  "make_event_type_from_cg_event"_test = [] {
+    if (auto event = CGEventCreateKeyboardEvent(nullptr,
+                                                static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
+                                                true)) {
+      expect(pqrs::osx::cg_event::make_event_type(event) ==
+             std::optional<pqrs::osx::cg_event::event_type>(pqrs::osx::cg_event::event_type::key_down));
+
+      CFRelease(event);
+    } else {
+      expect(false);
+    }
+
+    if (auto event = CGEventCreateKeyboardEvent(nullptr,
+                                                static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
+                                                false)) {
+      expect(pqrs::osx::cg_event::make_event_type(event) ==
+             std::optional<pqrs::osx::cg_event::event_type>(pqrs::osx::cg_event::event_type::key_up));
+
+      CFRelease(event);
+    } else {
+      expect(false);
+    }
+
+    if (auto event = pqrs_test_create_aux_control_button_event_with_type(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up),
+                                                                         NX_KEYDOWN)) {
+      expect(pqrs::osx::cg_event::make_event_type(event) ==
+             std::optional<pqrs::osx::cg_event::event_type>(pqrs::osx::cg_event::event_type::key_down));
+
+      CFRelease(event);
+    } else {
+      expect(false);
+    }
+
+    if (auto event = pqrs_test_create_aux_control_button_event_with_type(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up),
+                                                                         NX_KEYUP)) {
+      expect(pqrs::osx::cg_event::make_event_type(event) ==
+             std::optional<pqrs::osx::cg_event::event_type>(pqrs::osx::cg_event::event_type::key_up));
+
+      CFRelease(event);
+    } else {
+      expect(false);
+    }
+  };
+
   return 0;
 }
