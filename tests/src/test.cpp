@@ -3,7 +3,7 @@
 
 #include "test_event_factory.h"
 
-int main(void) {
+int main() {
   using namespace boost::ut;
   using namespace boost::ut::literals;
 
@@ -119,68 +119,88 @@ int main(void) {
   };
 
   "make_usage_pair_from_cg_event"_test = [] {
-    if (auto event = CGEventCreateKeyboardEvent(nullptr,
-                                                static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
-                                                true)) {
-      expect(pqrs::osx::cg_event::make_usage_pair(event) ==
+    expect(pqrs::osx::cg_event::make_usage_pair(static_cast<CGEventRef>(nullptr)) ==
+           std::optional<pqrs::hid::usage_pair>(std::nullopt));
+
+    if (auto event = pqrs::cf::adopt_cf_ptr(CGEventCreateKeyboardEvent(nullptr,
+                                                                       static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
+                                                                       true))) {
+      expect(pqrs::osx::cg_event::make_usage_pair(*event) ==
              std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::keyboard_or_keypad,
                                                                         pqrs::hid::usage::keyboard_or_keypad::keyboard_a)));
-
-      CFRelease(event);
     } else {
       expect(false);
     }
 
-    if (auto event = pqrs_test_create_aux_control_button_event(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up))) {
-      expect(pqrs::osx::cg_event::make_usage_pair(event) ==
+    if (auto event = pqrs::cf::adopt_cf_ptr(CGEventCreateKeyboardEvent(nullptr,
+                                                                       static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
+                                                                       true))) {
+      CGEventSetType(*event, kCGEventFlagsChanged);
+
+      expect(pqrs::osx::cg_event::make_usage_pair(*event) ==
+             std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::keyboard_or_keypad,
+                                                                        pqrs::hid::usage::keyboard_or_keypad::keyboard_a)));
+    } else {
+      expect(false);
+    }
+
+    if (auto event = pqrs::cf::adopt_cf_ptr(CGEventCreate(nullptr))) {
+      expect(pqrs::osx::cg_event::make_usage_pair(*event) ==
+             std::optional<pqrs::hid::usage_pair>(std::nullopt));
+    } else {
+      expect(false);
+    }
+
+    if (auto event = pqrs::cf::adopt_cf_ptr(pqrs_test_create_aux_control_button_event(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up)))) {
+      expect(pqrs::osx::cg_event::make_usage_pair(*event) ==
              std::optional<pqrs::hid::usage_pair>(pqrs::hid::usage_pair(pqrs::hid::usage_page::consumer,
                                                                         pqrs::hid::usage::consumer::volume_increment)));
-
-      CFRelease(event);
     } else {
       expect(false);
     }
   };
 
   "make_event_type_from_cg_event"_test = [] {
-    if (auto event = CGEventCreateKeyboardEvent(nullptr,
-                                                static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
-                                                true)) {
-      expect(pqrs::osx::cg_event::make_event_type(event) ==
+    expect(pqrs::osx::cg_event::make_event_type(static_cast<CGEventRef>(nullptr)) ==
+           std::optional<pqrs::osx::cg_event::event_type>(std::nullopt));
+
+    if (auto event = pqrs::cf::adopt_cf_ptr(CGEventCreateKeyboardEvent(nullptr,
+                                                                       static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
+                                                                       true))) {
+      expect(pqrs::osx::cg_event::make_event_type(*event) ==
              std::optional<pqrs::osx::cg_event::event_type>(pqrs::osx::cg_event::event_type::key_down));
-
-      CFRelease(event);
     } else {
       expect(false);
     }
 
-    if (auto event = CGEventCreateKeyboardEvent(nullptr,
-                                                static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
-                                                false)) {
-      expect(pqrs::osx::cg_event::make_event_type(event) ==
+    if (auto event = pqrs::cf::adopt_cf_ptr(CGEventCreateKeyboardEvent(nullptr,
+                                                                       static_cast<CGKeyCode>(type_safe::get(pqrs::osx::cg_event::key_code::keyboard_a)),
+                                                                       false))) {
+      expect(pqrs::osx::cg_event::make_event_type(*event) ==
              std::optional<pqrs::osx::cg_event::event_type>(pqrs::osx::cg_event::event_type::key_up));
-
-      CFRelease(event);
     } else {
       expect(false);
     }
 
-    if (auto event = pqrs_test_create_aux_control_button_event_with_type(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up),
-                                                                         NX_KEYDOWN)) {
-      expect(pqrs::osx::cg_event::make_event_type(event) ==
+    if (auto event = pqrs::cf::adopt_cf_ptr(CGEventCreate(nullptr))) {
+      expect(pqrs::osx::cg_event::make_event_type(*event) ==
+             std::optional<pqrs::osx::cg_event::event_type>(std::nullopt));
+    } else {
+      expect(false);
+    }
+
+    if (auto event = pqrs::cf::adopt_cf_ptr(pqrs_test_create_aux_control_button_event_with_type(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up),
+                                                                                                NX_KEYDOWN))) {
+      expect(pqrs::osx::cg_event::make_event_type(*event) ==
              std::optional<pqrs::osx::cg_event::event_type>(pqrs::osx::cg_event::event_type::key_down));
-
-      CFRelease(event);
     } else {
       expect(false);
     }
 
-    if (auto event = pqrs_test_create_aux_control_button_event_with_type(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up),
-                                                                         NX_KEYUP)) {
-      expect(pqrs::osx::cg_event::make_event_type(event) ==
+    if (auto event = pqrs::cf::adopt_cf_ptr(pqrs_test_create_aux_control_button_event_with_type(type_safe::get(pqrs::osx::cg_event::aux_control_button::sound_up),
+                                                                                                NX_KEYUP))) {
+      expect(pqrs::osx::cg_event::make_event_type(*event) ==
              std::optional<pqrs::osx::cg_event::event_type>(pqrs::osx::cg_event::event_type::key_up));
-
-      CFRelease(event);
     } else {
       expect(false);
     }

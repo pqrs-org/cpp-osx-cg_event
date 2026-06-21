@@ -3,7 +3,7 @@
 #include <pqrs/osx/cg_event.hpp>
 #include <thread>
 
-int main(void) {
+int main() {
   auto position = pqrs::osx::cg_event::mouse::cursor_position();
   std::cout << "x " << position.x << " y " << position.y << std::endl;
 
